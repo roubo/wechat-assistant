@@ -32,6 +32,17 @@ async function getEveryDayContent(date, city, endWord) {
   return str;
 }
 
+/**
+ * 获取自定义说内容
+ * @param {*} message 信息内容
+ * @param {*} endWord 结尾备注
+ */
+async function getCustomContent(message,  endWord) {
+  let today = lib.formatDate(new Date()); //获取今天的日期
+  let str = `<br><br>${message}<br><br>————————${endWord}`;
+  return str;
+}
+
 
 // 添加定时提醒
 async function addSchedule(that,obj) {
@@ -55,7 +66,7 @@ async function addSchedule(that,obj) {
   } catch (error) {
     console.log('设置定时任务失败',error)
     return false
-  } 
+  }
 }
 
 /**

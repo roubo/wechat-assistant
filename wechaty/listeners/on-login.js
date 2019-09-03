@@ -14,12 +14,38 @@ async function setEveryDayRoomSayTask(that, item) {
     let room = await that.Room.find({ topic: item.roomName });
     if (!room) {
       console.log(`查找不到群：${item.roomName}，请检查群名是否正确`)
-      return 
+      return
     }else{
       console.log(`群：“${item.roomName}”设置资讯任务成功`)
       lib.setSchedule(time, async () => {
         let content = await common.getEveryDayRoomContent( item.sortId,item.endWord);
         console.log('新闻咨询开始发送，内容：', content);
+        lib.delay(10000);
+        await room.say(content);
+      });
+    }
+  } catch (error) {
+    console.log('设置群定时任务失败：', error);
+  }
+}
+
+/**
+ * 高频自定义信息，针对群
+ * @param {*} that bot对象
+ * @param {*} item 任务项
+ */
+async function setCustomRoomSayTask(that, item) {
+  try {
+    let time = item.date;
+    let room = await that.Room.find({ topic: item.roomName });
+    if (!room) {
+      console.log(`查找不到群：${item.roomName}，请检查群名是否正确`)
+      return
+    }else{
+      console.log(`群：“${item.roomName}”设置自定义任务成功`)
+      lib.setSchedule(time, async () => {
+        let content = await common.getCustomContent( item.message,item.endWord);
+        console.log('自定义消息开始发送，内容：', content);
         lib.delay(10000);
         await room.say(content);
       });
@@ -39,12 +65,12 @@ async function setEveryDayTask(that, item) {
     let contact = await that.Contact.find({ alias: item.alias }) || await that.Contact.find({ name: item.name }); // 获取你要发送的联系人
       if(!contact){
         console.log(`查找不到用户昵称为'${item.name}'或备注为'${item.alias}'的用户，请检查设置用户是否正确`)
-        return 
+        return
       }else{
         console.log(`设置用户：“${item.name}|${item.alias}”每日说任务成功`)
         lib.setSchedule(time, async () => {
-          let content = await common.getEveryDayContent(item.memorialDay, item.city,item.endWord); 
-          console.log('每日说任务开始工作,发送内容：', content); 
+          let content = await common.getEveryDayContent(item.memorialDay, item.city,item.endWord);
+          console.log('每日说任务开始工作,发送内容：', content);
           lib.delay(10000);
           await contact.say(content);
         });
@@ -80,8 +106,9 @@ async function setScheduleTask(that, item) {
  * @param {*} scheduleList 提醒任务列表
  * @param {*} daySayList 每日说任务列表
  * @param {*} RoomSayList 群资讯任务列表
+ * @param {*} customSayList 新增每小时等高频任务列表
  */
-async function initSchedule(that, scheduleList, daySayList, RoomSayList) {
+async function initSchedule(that, scheduleList, daySayList, RoomSayList, customSayList) {
   if (scheduleList && scheduleList.length > 0) {
     for (let item of scheduleList) {
       setScheduleTask(that, item);
@@ -97,6 +124,11 @@ async function initSchedule(that, scheduleList, daySayList, RoomSayList) {
       setEveryDayRoomSayTask(that, room);
     }
   }
+  if (customSayList && customSayList.length > 0) {
+    for (let custom of customSayList) {
+      setCustomRoomSayTask(that, custom);
+    }
+  }
 }
 /**
  * 登录成功监听事件
@@ -107,7 +139,7 @@ async function onLogin(user) {
   setTimeout(async ()=>{
     let scheduleList = await api.getScheduleList()
     console.log('提醒任务列表',scheduleList)
-    initSchedule(this, scheduleList,config.DAYLIST,config.ROOMLIST);
+    initSchedule(this, scheduleList,config.DAYLIST,config.ROOMLIST, config.CUSTOMROOMLIST);
   }, 4000)
 }
 

@@ -12,7 +12,7 @@ module.exports = {
    * city:朋友所在城市，写的时候不要带‘市’
    * endWord:每日说内容的最后的落款 案例中效果为‘——————————爱你的朋友Leo_chen’
    * date:每天定时的发送时间，案例中代表每天早上8点钟，具体规则见‘wechaty/lib/index.js’ (多个好友不要设置相同时间！不要设置相同时间！不要设置相同时间！)
-   */ 
+   */
   DAYLIST: [
     {name:'昵称',alias:'备注',memorialDay:'2015/04/18',city:'上海',endWord:'爱你的朋友Leo_chen',date:'0 0 8 * * *'},
   ],
@@ -27,8 +27,12 @@ module.exports = {
   ROOMLIST: [
     {roomName:'群名',sortId:22,endWord:'小助手雷欧',date:'0 30 7 * * *'},
   ],
+
+  CUSTOMROOMLIST: [
+    {roomName:'群名',message:'请大家举起水杯，干杯',endWord:'小助手雷欧',date:'0 30 7 * * *'},
+  ],
    /**
-    * 自动添加好友关键词，留空代表同意任何好友请求 
+    * 自动添加好友关键词，留空代表同意任何好友请求
     */
   ACCEPTFRIEND: [],
   /**
@@ -39,7 +43,7 @@ module.exports = {
    * 关键词回复列表
    * key: 多个关键词触发相同内容，非模糊匹配，为全匹配
    * reply: 回复内容
-   */ 
+   */
   KEYWORDLIST:[{key:['你好','您好'],reply:'你好啊，我是小助手雷欧'}],
   /**
    * 新通过好友，默认发送消息
@@ -67,5 +71,5 @@ module.exports = {
     {key:'*',position:'start',event:'star'},
     {key:'姓',position:'start',event:'xing'},
     {key:'姓',position:'end',event:'xing'},
-  ],  
+  ],
 }
